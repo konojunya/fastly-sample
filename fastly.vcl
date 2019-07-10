@@ -5,8 +5,8 @@ sub vcl_recv {
     return(pass);
   }
 
-  declare local var.CUSTOM_FLAG BOOL;
-  set var.CUSTOM_FLAG = true;
+  declare local var.CUSTOM_FLAG STRING;
+  set var.CUSTOM_FLAG = "CUSTOM_HEADER";
   set req.http.X-FLAG = var.CUSTOM_FLAG;
 
   return(lookup);
@@ -14,6 +14,8 @@ sub vcl_recv {
 
 sub vcl_fetch {
 #FASTLY fetch
+
+  esi;
 
   if ((beresp.status == 500 || beresp.status == 503) && req.restarts < 1 && (req.method == "GET" || req.method == "HEAD")) {
     restart;
